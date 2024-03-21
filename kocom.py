@@ -561,7 +561,7 @@ def discovery():
 
 #https://www.home-assistant.io/docs/mqtt/discovery/
 #<discovery_prefix>/<component>/<object_id>/config
-def publish_discovery(dev, sub):
+def publish_discovery(dev, sub=''):
     if dev == 'fan':
         topic = 'homeassistant/fan/kocom_wallpad_fan/config'
         payload = {

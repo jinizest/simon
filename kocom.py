@@ -638,7 +638,7 @@ def publish_discovery(dev, sub=''):
             logging.info(logtxt)
       
      #############################jini
-        elif dev == 'light':
+    elif dev == 'light':
         for num in range(1, int(config.get('User', 'light_count'))+1):
             #ha_topic = 'homeassistant/light/kocom_livingroom_light1/config'
             topic = 'homeassistant/light/kocom_{}_light{}/config'.format(sub, num)

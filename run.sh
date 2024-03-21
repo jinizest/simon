@@ -2,11 +2,9 @@
 
 SHARE_DIR=/share/kocom
 
-if [ ! -f $SHARE_DIR/kocom.py ]; then
-	mkdir $SHARE_DIR
- 	mv /kocom.py $SHARE_DIR
-	mv /kocom.conf $SHARE_DIR
-fi
+mkdir -p $SHARE_DIR
+mv /kocom.py $SHARE_DIR
+mv /kocom.conf $SHARE_DIR
 
 echo "[Info] Run Kocom Wallpad with RS485!"
 cd $SHARE_DIR

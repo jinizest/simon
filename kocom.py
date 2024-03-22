@@ -508,34 +508,29 @@ def publish_status(p):
 
 def packet_processor(p):
     logtxt = ""
-    if p['type']=='ack' and p['src']=='wallpad':  # ack from wallpad
-    #if p['type']=='send' and p['dest']=='wallpad':  # response packet to wallpad
-        if p['dest'] == 'thermo' and p['cmd']=='state':
-        #if p['src'] == 'thermo' and p['cmd']=='state':
+    if p['type'] == 'send' and p['dest'] == 'wallpad':  # response packet to wallpad
+        if p['src'] == 'thermo' and p['cmd'] == 'state':
             state = thermo_parse(p['value'])
-            logtxt='[MQTT publish|thermo] room{} data[{}]'.format(p['dest_subid'], state)
-            mqttc.publish("kocom/room/thermo/" + p['dest_subid'] + "/state", json.dumps(state))
-        elif p['dest'] == 'light' and p['cmd']=='state':
-        #elif p['src'] == 'light' and p['cmd']=='state':
+            logtxt='[MQTT publish|thermo] id[{}] data[{}]'.format(p['src_subid'], state)
+            mqttc.publish("kocom/room/thermo/" + p['src_subid'] + "/state", json.dumps(state))
+        elif p['src'] == 'light' and p['cmd'] == 'state':
             state = light_parse(p['value'])
-            logtxt='[MQTT publish|light] data[{}]'.format(state)
-            mqttc.publish("kocom/livingroom/light/state", json.dumps(state))
-        elif p['dest'] == 'fan' and p['cmd']=='state':
-        #elif p['src'] == 'fan' and p['cmd']=='state':
+            logtxt='[MQTT publish|light] room[{}] data[{}]'.format(p['src_room'], state)
+            mqttc.publish("kocom/{}/light/state".format(p['src_room']), json.dumps(state))
+        elif p['src'] == 'fan' and p['cmd'] == 'state':
             state = fan_parse(p['value'])
             logtxt='[MQTT publish|fan] data[{}]'.format(state)
-            mqttc.publish("kocom/livingroom/fan/state", json.dumps(state))    
-        elif p['dest'] == 'gas':
-        #elif p['src'] == 'gas':
+            mqttc.publish("kocom/livingroom/fan/state", json.dumps(state))
+        elif p['src'] == 'gas':
             state = {'state': p['cmd']}
             logtxt='[MQTT publish|gas] data[{}]'.format(state)
             mqttc.publish("kocom/livingroom/gas/state", json.dumps(state))
-    elif p['type']=='send' and p['dest']=='elevator':
+    elif p['type'] == 'send' and p['dest'] == 'elevator':
         floor = int(p['value'][2:4],16)
         rs485_floor = int(config.get('Elevator','rs485_floor', fallback=0))
         if rs485_floor != 0 :
             state = {'floor': floor}
-            if rs485_floor==floor:
+            if rs485_floor == floor:
                 state['state'] = 'off'
         else:
             state = {'state': 'off'}

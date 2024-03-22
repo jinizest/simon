@@ -267,17 +267,19 @@ def parse(hex_data):
     payload_h = hex_data[18:36]
     cmd = cmd_t_dic.get(cmd_h)
 
-    ret = { 'header_h':header_h, 'type_h':type_h, 'seq_h':seq_h, 'monitor_h':monitor_h, 'dest_h':dest_h, 'src_h':src_h, 'cmd_h':cmd_h, 
+    ret = { 'header_h':header_h, 'type_h':type_h, 'seq_h':seq_h, 'monitor_h':monitor_h, 'dest_h':dest_h, 'src_h':src_h, 'cmd_h':cmd_h,
             'value_h':value_h, 'chksum_h':chksum_h, 'trailer_h':trailer_h, 'data_h':data_h, 'payload_h':payload_h,
             'type':type_t_dic.get(type_h),
-            'seq':seq_t_dic.get(seq_h), 
+            'seq':seq_t_dic.get(seq_h),
             'dest':device_t_dic.get(dest_h[:2]),
             'dest_subid':str(int(dest_h[2:4], 16)),
+            'dest_room':room_t_dic.get(dest_h[2:4]),
             'src':device_t_dic.get(src_h[:2]),
             'src_subid':str(int(src_h[2:4], 16)),
+            'src_room':room_t_dic.get(src_h[2:4]),
             'cmd':cmd if cmd!=None else cmd_h,
             'value':value_h,
-            'time': time.time(),
+            'time':time.time(),
             'flag':None}
     return ret
 

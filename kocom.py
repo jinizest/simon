@@ -659,7 +659,7 @@ def publish_discovery(dev, sub=''):
                     'sw': SW_VERSION
                 }
             }
-            logtxt='[MQTT Discovery|{}{}] data[{}]'.format(dev, num, topic)
+            logtxt='[MQTT Discovery|{}{}{}] data[{}]'.format(sub, dev, num, topic)
             mqttc.publish(topic, json.dumps(payload))
             if logtxt != "" and config.get('Log', 'show_mqtt_publish') == 'True':
                 logging.info(logtxt)

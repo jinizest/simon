@@ -555,7 +555,7 @@ def discovery():
         dev = t.split('_')
         sub = ''
         if len(dev) > 1:
-            sub = dev[1]
+            sub = dev[0]
         publish_discovery(dev[0], sub)
     publish_discovery('query')
 

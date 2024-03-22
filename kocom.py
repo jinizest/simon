@@ -508,18 +508,18 @@ def publish_status(p):
 
 def packet_processor(p):
     logtxt = ""
-    if p['type']=='ack' and p['src']=='wallpad':  # ack from wallpad
+    if p['type'] == 'ack' and p['src'] == 'wallpad':  # ack from wallpad
     #if p['type']=='send' and p['dest']=='wallpad':  # response packet to wallpad
         if p['dest'] == 'thermo' and p['cmd']=='state':
         #if p['src'] == 'thermo' and p['cmd']=='state':
             state = thermo_parse(p['value'])
             logtxt='[MQTT publish|thermo] room{} data[{}]'.format(p['dest_subid'], state)
             mqttc.publish("kocom/room/thermo/" + p['dest_subid'] + "/state", json.dumps(state))
-        elif p['dest'] == 'light' and p['cmd']=='state':
+        elif p['dest'] == 'light' and p['cmd'] == 'state':
         #elif p['src'] == 'light' and p['cmd']=='state':
             state = light_parse(p['value'])
-            logtxt='[MQTT publish|light] data[{}]'.format(state)
-            mqttc.publish("kocom/livingroom/light/state", json.dumps(state))
+            logtxt='[MQTT publish|light] room[{}] data[{}]'.format(p['src_room'], state)
+            mqttc.publish("kocom/{}/light/state".format(p['src_room']), json.dumps(state))
         elif p['dest'] == 'fan' and p['cmd']=='state':
         #elif p['src'] == 'fan' and p['cmd']=='state':
             state = fan_parse(p['value'])
@@ -530,12 +530,12 @@ def packet_processor(p):
             state = {'state': p['cmd']}
             logtxt='[MQTT publish|gas] data[{}]'.format(state)
             mqttc.publish("kocom/livingroom/gas/state", json.dumps(state))
-    elif p['type']=='send' and p['dest']=='elevator':
+    elif p['type'] == 'send' and p['dest'] == 'elevator':
         floor = int(p['value'][2:4],16)
         rs485_floor = int(config.get('Elevator','rs485_floor', fallback=0))
         if rs485_floor != 0 :
             state = {'floor': floor}
-            if rs485_floor==floor:
+            if rs485_floor == floor:
                 state['state'] = 'off'
         else:
             state = {'state': 'off'}
@@ -556,7 +556,10 @@ def discovery():
         sub = ''
         if len(dev) > 1:
             sub = dev[1]
+        logtxt='[MQTT Discovery|{}] data[{}]'.format(dev[0], sub)
         publish_discovery(dev[0], sub)
+        if logtxt != "" and config.get('Log', 'show_mqtt_discovery') == 'True':
+            logging.info(logtxt)
     publish_discovery('query')
 
 #https://www.home-assistant.io/docs/mqtt/discovery/
@@ -614,7 +617,7 @@ def publish_discovery(dev, sub=''):
         if logtxt != "" and config.get('Log', 'show_mqtt_publish') == 'True':
             logging.info(logtxt)
     elif dev == 'elevator':
-        topic = 'homeassistant/elevator/kocom_wallpad_elevator/config'
+        topic = 'homeassistant/switch/kocom_wallpad_elevator/config'
         payload = {
             'name': 'Kocom Wallpad Elevator',
             'cmd_t': "kocom/myhome/elevator/command",
@@ -622,6 +625,7 @@ def publish_discovery(dev, sub=''):
             'val_tpl': "{{ value_json.state }}",
             'pl_on': 'on',
             'pl_off': 'off',
+            'ic': 'mdi:elevator',
             'qos': 0,
             'uniq_id': '{}_{}_{}'.format('kocom', 'wallpad', dev),
             'device': {
@@ -650,7 +654,8 @@ def publish_discovery(dev, sub=''):
                 'pl_on': 'on',
                 'pl_off': 'off',
                 'qos': 0,
-                'uniq_id': '{}_{}_{}{}'.format('kocom', 'wallpad', dev, num),
+#               'uniq_id': '{}_{}_{}{}'.format('kocom', 'wallpad', dev, num),      # 20221108 주석처리
+                'uniq_id': '{}_{}_{}{}'.format('kocom', sub, dev, num),            # 20221108 수정
                 'device': {
                     'name': '코콤 스마트 월패드',
                     'ids': 'kocom_smart_wallpad',
@@ -680,7 +685,7 @@ def publish_discovery(dev, sub=''):
             'curr_temp_t': 'kocom/room/thermo/{}/state'.format(num),
             'curr_temp_tpl': '{{ value_json.cur_temp }}',
             'modes': ['off', 'heat'],
-            'min_temp': 20,
+            'min_temp': 17,
             'max_temp': 25,
             'ret': 'false',
             'qos': 0,
@@ -780,7 +785,7 @@ def read_serial():
                 not_parsed_buf = ''
 
 
-            if len(buf) == packet_size*2:
+            if len(buf) == (packet_size * 2):
                 chksum_calc = chksum(buf[len(header_h):chksum_position*2])
                 chksum_buf = buf[chksum_position*2:chksum_position*2+2]
                 if chksum_calc == chksum_buf and buf[-len(trailer_h):] == trailer_h:

@@ -476,7 +476,7 @@ def mqtt_on_message(mqttc, obj, msg):
         elif command == 'off':
             threading.Thread(target=mqttc.publish, args=("kocom/myhome/elevator/state", state_off)).start()
 
-    # kocom/livingroom/fan/set_preset_mode/command
+    # kocom/bedroom/fan/set_preset_mode/command
     elif 'fan' in topic_d and 'set_preset_mode' in topic_d:
         dev_id = device_h_dic['fan'] + room_h_dic.get(topic_d[1])
         onoff_dic = {'off':'0000', 'on':'1101'}  
@@ -491,7 +491,7 @@ def mqtt_on_message(mqttc, obj, msg):
         value = onoff + speed + '0'*10
         send_wait_response(dest=dev_id, value=value, log='fan')
 
-    # kocom/livingroom/fan/command
+    # kocom/bedroom/fan/command
     elif 'fan' in topic_d:
         dev_id = device_h_dic['fan'] + room_h_dic.get(topic_d[1])
         onoff_dic = {'off':'0000', 'on':'1101'}  
@@ -534,7 +534,7 @@ def packet_processor(p):
         #elif p['src'] == 'fan' and p['cmd']=='state':
             state = fan_parse(p['value'])
             logtxt='[MQTT publish|fan] data[{}]'.format(state)
-            mqttc.publish("kocom/livingroom/fan/state", json.dumps(state))    
+            mqttc.publish("kocom/bedroom/fan/state", json.dumps(state))    
         elif p['dest'] == 'gas':
         #elif p['src'] == 'gas':
             state = {'state': p['cmd']}
@@ -579,12 +579,12 @@ def publish_discovery(dev, sub=''):
         topic = 'homeassistant/fan/kocom_wallpad_fan/config'
         payload = {
             'name': 'Kocom Wallpad Fan',
-            'cmd_t': 'kocom/livingroom/fan/command',
-            'stat_t': 'kocom/livingroom/fan/state',
+            'cmd_t': 'kocom/bedroom/fan/command',
+            'stat_t': 'kocom/bedroom/fan/state',
             'stat_val_tpl': '{{ value_json.state }}',
-            'pr_mode_stat_t': 'kocom/livingroom/fan/state',
+            'pr_mode_stat_t': 'kocom/bedroom/fan/state',
             'pr_mode_val_tpl': '{{ value_json.preset }}',
-            'pr_mode_cmd_t': 'kocom/livingroom/fan/set_preset_mode/command',
+            'pr_mode_cmd_t': 'kocom/bedroom/fan/set_preset_mode/command',
             'pr_mode_cmd_tpl': '{{ value }}',
             'pr_modes': ['Off', 'Low', 'Medium', 'High'],
             'pl_on': 'on',

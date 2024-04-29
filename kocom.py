@@ -39,7 +39,7 @@ chksum_position = 18  # 18th byte
 type_t_dic = {'30b':'send', '30d':'ack'}
 seq_t_dic = {'c':1, 'd':2, 'e':3, 'f':4}
 # device_t_dic = {'01':'wallpad', '0e':'light', '2c':'gas', '36':'thermo', '3b': 'plug', '44':'elevator', '48':'fan'}  # 2023.08 AC, AIR 추가
-device_t_dic = {'01': 'wallpad', '0e': 'light', '2c': 'gas', '36': 'thermo', '36': 'ac', '3b': 'plug', '44': 'elevator', '48': 'fan'} # 2024.04.29 AC 추가 #ac도 36
+device_t_dic = {'01': 'wallpad', '0e': 'light', '2c': 'gas', '36': 'thermo', '36': 'ac', '3b': 'plug', '44': 'elevator', '48': 'fan'} # 2024.04.29 AC 추가 #ac 36
 cmd_t_dic = {'00':'state', '01':'on', '02':'off', '3a':'query'}
 room_t_dic = {'00':'livingroom', '01':'bedroom', '02':'room1', '03':'room2'}
 
@@ -571,8 +571,8 @@ def packet_processor(p):
             mqttc.publish("kocom/room/thermo/" + p['dest_subid'] + "/state", json.dumps(state))
         elif p['dest'] == 'ac' and p['cmd'] == 'state':
             state = ac_parse(p['value'])
-            logtxt = '[MQTT publish|ac] id[{}] data[{}]'.format(p['src_subid'], state)
-            mqttc.publish('kocom/room/ac/' + p['src_subid'] + '/state', json.dumps(state), retain=True)
+            logtxt = '[MQTT publish|ac] room[{}] data[{}]'.format(p['dest_subid'], state)
+            mqttc.publish('kocom/room/ac/' + p['dest_subid'] + '/state', json.dumps(state), retain=True)
         elif p['dest'] == 'light' and p['cmd'] == 'state':
         #elif p['src'] == 'light' and p['cmd'] == 'state':
             state = light_parse(p['value'])

@@ -756,16 +756,16 @@ def publish_discovery(dev, sub=''):
                 'sw': SW_VERSION
             }
         }
-        logtxt='[MQTT Discovery|{}{}] data[{}]'.format(dev, num, topic)
+        logtxt='[MQTT Discovery|{}|{}] data[{}]'.format(sub, dev, topic)
         mqttc.publish(topic, json.dumps(payload))
         if logtxt != "" and config.get('Log', 'show_mqtt_publish') == 'True':
             logging.info(logtxt)
     elif dev == 'ac': #24.04.29 추가 simon~
         num = int(room_h_dic.get(sub))
         # ha_topic = 'homeassistant/climate/kocom_livingroom_thermostat/config'
-        topic = 'homeassistant/climate/kocom_{}_ac/config'.format(num)
+        topic = 'homeassistant/climate/kocom_{}_ac/config'.format(sub)
         payload = {
-            'name': 'kocom_ac_{}'.format(num),
+            'name': 'kocom {} ac'.format(sub),
             'mode_cmd_t': 'kocom/room/ac/{}/ac_mode/command'.format(num),
             'mode_stat_t': 'kocom/room/ac/{}/state'.format(num),
             'mode_stat_tpl': '{{ value_json.state }}',
@@ -782,9 +782,9 @@ def publish_discovery(dev, sub=''):
             'curr_temp_tpl': '{{ value_json.temperature }}',
             'modes': ['off', 'cool', 'fan_only', 'dry', 'auto'],
             'fan_modes': ['LOW', 'MEDIUM', 'HIGH'],
-            'min_temp': 10,
+            'min_temp': 16,
             'max_temp': 30,
-            'uniq_id': 'kocom_ac_{}'.format(num),
+            'uniq_id': '{}_{}_{}{}'.format('kocom', 'wallpad', dev, num),
             'device': {
                 'name': '코콤 스마트 월패드',
                 'ids': 'kocom_smart_wallpad',
@@ -793,7 +793,7 @@ def publish_discovery(dev, sub=''):
                 'sw': SW_VERSION
             }
         }
-        logtxt = '[MQTT Discovery|{}{}] data[{}]'.format(dev, sub, topic)
+        logtxt = '[MQTT Discovery|{}|{}] data[{}]'.format(sub, dev, topic)
         mqttc.publish(topic, json.dumps(payload), retain=True)
         if logtxt != '' and config.get('Log', 'show_mqtt_publish') == 'True':
             logging.info(logtxt)

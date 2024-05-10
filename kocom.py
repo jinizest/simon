@@ -780,6 +780,8 @@ def publish_discovery(dev, sub=''):
             # 'fan_modes': ['LOW', 'MEDIUM', 'HIGH'],
             'min_temp': 16,
             'max_temp': 30,
+            'ret': 'false',
+            'qos': 0,
             'uniq_id': '{}_{}_{}{}'.format('kocom', 'wallpad', dev, num),
             'device': {
                 'name': '코콤 스마트 월패드',

@@ -443,7 +443,7 @@ def mqtt_on_message(mqttc, obj, msg):
 
  # 2023.08 AC 추가 #24.04.29 simon도 추가~ ㅎㅎ -> 240510 simon 수정
     elif 'ac' in topic_d and 'ac_mode' in topic_d:
-        onoff_dic = {'off':'1101', 'on':'1100'}
+        onoff_dic = {'off':'1101', 'cool':'1100'}
         dev_id = device_h_dic['ac']+'{0:02x}'.format(int(topic_d[3]))
         q = query(dev_id)
         settemp_hex = '{0:02x}'.format(int(config.get('User', 'ac_init_temp'))) if q['flag']!=False else '14'
@@ -765,7 +765,7 @@ def publish_discovery(dev, sub=''):
             'name': 'kocom {} ac'.format(sub),
             'mode_cmd_t': 'kocom/room/ac/{}/ac_mode/command'.format(num),
             'mode_stat_t': 'kocom/room/ac/{}/state'.format(num),
-            'mode_stat_tpl': '{{ value_json.state }}',
+            'mode_stat_tpl': '{{ value_json.ac_mode }}',
 
             # 'fan_mode_cmd_t': 'kocom/room/ac/{}/fan_mode/command'.format(num), #fan mode 조절 안됨
             # 'fan_mode_stat_t': 'kocom/room/ac/{}/state'.format(num),
@@ -773,7 +773,7 @@ def publish_discovery(dev, sub=''):
             
             'temp_cmd_t': 'kocom/room/ac/{}/set_temp/command'.format(num),
             'temp_stat_t': 'kocom/room/ac/{}/state'.format(num),
-            'temp_stat_tpl': '{{ value_json.target }}',
+            'temp_stat_tpl': '{{ value_json.set_temp }}',
 
             'curr_temp_t': 'kocom/room/ac/{}/state'.format(num),
             'curr_temp_tpl': '{{ value_json.temperature }}',

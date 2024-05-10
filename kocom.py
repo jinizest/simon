@@ -447,7 +447,7 @@ def mqtt_on_message(mqttc, obj, msg):
         dev_id = device_h_dic['ac']+'{0:02x}'.format(int(topic_d[3]))
         q = query(dev_id)
         settemp_hex = '{0:02x}'.format(int(config.get('User', 'ac_init_temp'))) if q['flag']!=False else '14'
-        value = ACmode_dic.get(command) + '00' + settemp_hex + '0000000000'
+        value = '11' + '00' + settemp_hex + '0000000000' #1100~
         send_wait_response(dest=dev_id, value=value, log='ac mode')
         
     # elif 'ac' in topic_d and 'fan_mode' in topic_d: # simon 모드 없음

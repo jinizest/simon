@@ -39,7 +39,8 @@ chksum_position = 18  # 18th byte
 type_t_dic = {'30b':'send', '30d':'ack'}
 seq_t_dic = {'c':1, 'd':2, 'e':3, 'f':4}
 # device_t_dic = {'01':'wallpad', '0e':'light', '2c':'gas', '36':'thermo', '3b': 'plug', '44':'elevator', '48':'fan'}  # 2023.08 AC, AIR 추가
-device_t_dic = {'01': 'wallpad', '0e': 'light', '2c': 'gas', '36': 'thermo', '36': 'ac', '3b': 'plug', '44': 'elevator', '48': 'fan'} # 2024.04.29 AC 추가 #ac 36
+# device_t_dic = {'01': 'wallpad', '0e': 'light', '2c': 'gas', '36': 'thermo', '3b': 'plug', '44': 'elevator', '48': 'fan'}
+device_t_dic = {'01': 'wallpad', '0e': 'light', '2c': 'gas', '36': 'ac', '3b': 'plug', '44': 'elevator', '48': 'fan'} # 2024.04.29 AC 추가 #ac 36 / thermo 비활
 cmd_t_dic = {'00':'state', '01':'on', '02':'off', '3a':'query'}
 room_t_dic = {'00':'livingroom', '01':'bedroom', '02':'room1', '03':'room2'}
 
@@ -442,7 +443,7 @@ def mqtt_on_message(mqttc, obj, msg):
 
  # 2023.08 AC 추가 #24.04.29 simon도 추가~ ㅎㅎ -> 240510 simon 수정
     elif 'ac' in topic_d and 'ac_mode' in topic_d:
-        ACmode_dic = {'heat': '11', 'off': '00'}
+        ACmode_dic = {'AC': '11', 'off': '00'}
         dev_id = device_h_dic['ac']+'{0:02x}'.format(int(topic_d[3]))
         q = query(dev_id)
         settemp_hex = '{0:02x}'.format(int(config.get('User', 'ac_init_temp'))) if q['flag']!=False else '14'
@@ -567,7 +568,7 @@ def packet_processor(p):
         elif p['dest'] == 'ac' and p['cmd'] == 'state':
             state = ac_parse(p['value'])
             logtxt = '[MQTT publish|AC] room[{}] data[{}]'.format(p['dest_subid'], state)
-            mqttc.publish('kocom/room/ac/' + p['dest_subid'] + '/state', json.dumps(state), retain=True)
+            mqttc.publish('kocom/room/ac/' + p['dest_subid'] + '/state', json.dumps(state))
         elif p['dest'] == 'light' and p['cmd'] == 'state':
         #elif p['src'] == 'light' and p['cmd'] == 'state':
             state = light_parse(p['value'])

@@ -443,11 +443,11 @@ def mqtt_on_message(mqttc, obj, msg):
 
  # 2023.08 AC 추가 #24.04.29 simon도 추가~ ㅎㅎ -> 240510 simon 수정
     elif 'ac' in topic_d and 'ac_mode' in topic_d:
-        ACmode_dic = {'AC': '11', 'off': '00'}
+        onoff_dic = {'off':'1101', 'on':'1100'}
         dev_id = device_h_dic['ac']+'{0:02x}'.format(int(topic_d[3]))
         q = query(dev_id)
         settemp_hex = '{0:02x}'.format(int(config.get('User', 'ac_init_temp'))) if q['flag']!=False else '14'
-        value = '11' + '00' + settemp_hex + '0000000000' #1100~
+        value = onoff_dic.get(command) + settemp_hex + '0000000000' #1100~
         send_wait_response(dest=dev_id, value=value, log='ac mode')
         
     # elif 'ac' in topic_d and 'fan_mode' in topic_d: # simon 모드 없음

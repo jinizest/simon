@@ -313,7 +313,7 @@ def fan_parse(value):
 
 # 2023.08 AC 추가 -> 240510 simon 수정
 def ac_parse(value):    
-    # state = 'off' if value[2:4] == '01' else 'on'
+    state = 'off' if value[2:4] == '01' else 'on'
     ret = { 'ac_mode': 'off' if value[2:4] == '01' else 'cool',
             'set_temp': int(value[4:6], 16) if value[:2] == '11' else int(config.get('User', 'ac_init_temp')),
             'cur_temp': int(value[8:10], 16)}

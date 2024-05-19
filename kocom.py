@@ -776,7 +776,7 @@ def publish_discovery(dev, sub=''):
             'temp_stat_tpl': '{{ value_json.set_temp }}',
 
             'curr_temp_t': 'kocom/room/ac/{}/state'.format(num),
-            'curr_temp_tpl': '{{ value_json.temperature }}',
+            'curr_temp_tpl': '{{ value_json.cur_temp }}',
             'modes': ['off', 'cool'],
             # 'fan_modes': ['LOW', 'MEDIUM', 'HIGH'],
             'min_temp': 16,

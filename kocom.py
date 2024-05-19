@@ -314,8 +314,8 @@ def fan_parse(value):
 # 2023.08 AC 추가 -> 240510 simon 수정
 def ac_parse(value):    
     state = 'off' if value[2:4] == '01' else 'on'
-    ac_mode = 'off' if value[2:4] == '01' else 'cool', 
-    target = int(value[4:6], 16) if value[:2] == '11' else int(config.get('User', 'ac_init_temp')),
+    ac_mode = 'off' if value[2:4] == '01' else 'cool' 
+    target = int(value[10:12], 16)
     temp = int(value[8:10], 16)
     logtxt = '[MQTT Parse | AC] value[{}], state[{}]'.format(value, state)    # 20221108 주석기능 추가
     if logtxt != '' and config.get('Log', 'show_recv_hex') == 'True':

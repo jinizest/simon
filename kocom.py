@@ -314,13 +314,13 @@ def fan_parse(value):
 # 2023.08 AC 추가 -> 240510 simon 수정
 def ac_parse(value):    
     state = 'off' if value[2:4] == '01' else 'on'
-    ac_mode = 'off' if value[2:4] == '01' else 'cool' 
-    target = int(value[10:12], 16)
-    temp = int(value[8:10], 16)
+    ret = { 'ac_mode': 'off' if value[2:4] == '01' else 'cool', 
+            'set_temp': int(value[4:6], 16) if value[:2] == '11' else int(config.get('User', 'ac_init_temp')),
+            'cur_temp': int(value[8:10], 16)}
     logtxt = '[MQTT Parse | AC] value[{}], state[{}]'.format(value, state)    # 20221108 주석기능 추가
     if logtxt != '' and config.get('Log', 'show_recv_hex') == 'True':
         logging.info(logtxt)
-    return {'state': state, 'ac_mode': ac_mode, 'temperature': temp, 'target': target}
+    return ret
 
 # query device --------------------------
 
@@ -443,11 +443,11 @@ def mqtt_on_message(mqttc, obj, msg):
 
  # 2023.08 AC 추가 #24.04.29 simon도 추가~ ㅎㅎ -> 240510 simon 수정
     elif 'ac' in topic_d and 'ac_mode' in topic_d:
-        onoff_dic = {'off':'1101', 'cool':'1100'}
+        aconoff_dic = {'cool':'1100', 'off':'1101'}
         dev_id = device_h_dic['ac']+'{0:02x}'.format(int(topic_d[3]))
         q = query(dev_id)
         settemp_hex = '{0:02x}'.format(int(config.get('User', 'ac_init_temp'))) if q['flag']!=False else '14'
-        value = onoff_dic.get(command) + settemp_hex + '0000000000' #1100~
+        value = aconoff_dic.get(command) + settemp_hex + '0000000000' #1100~
         send_wait_response(dest=dev_id, value=value, log='ac mode')
         
     # elif 'ac' in topic_d and 'fan_mode' in topic_d: # simon 모드 없음

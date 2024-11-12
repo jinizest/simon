@@ -40,7 +40,7 @@ type_t_dic = {'30b':'send', '30d':'ack'}
 seq_t_dic = {'c':1, 'd':2, 'e':3, 'f':4}
 # device_t_dic = {'01':'wallpad', '0e':'light', '2c':'gas', '36':'thermo', '3b': 'plug', '44':'elevator', '48':'fan'}  # 2023.08 AC, AIR 추가
 # device_t_dic = {'01': 'wallpad', '0e': 'light', '2c': 'gas', '36': 'thermo', '3b': 'plug', '44': 'elevator', '48': 'fan'}
-device_t_dic = {'01': 'wallpad', '0e': 'light', '2c': 'gas', '36': 'ac', '3b': 'plug', '44': 'elevator', '48': 'fan'} # 2024.04.29 AC 추가 #ac 36 / thermo 비활
+device_t_dic = {'01': 'wallpad', '0e': 'light', '2c': 'gas', '36': 'thermo', '3b': 'plug', '44': 'elevator', '48': 'fan'} # 2024.04.29 AC 추가 #ac 비활 36 / thermo 활
 cmd_t_dic = {'00':'state', '01':'on', '02':'off', '3a':'query'}
 room_t_dic = {'00':'livingroom', '01':'bedroom', '02':'room1', '03':'room2'}
 

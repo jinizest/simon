@@ -565,10 +565,10 @@ def packet_processor(p):
             state = thermo_parse(p['value'])
             logtxt='[MQTT publish|thermo] room{} data[{}]'.format(p['dest_subid'], state)
             mqttc.publish("kocom/room/thermo/" + p['dest_subid'] + "/state", json.dumps(state))
-        elif p['dest'] == 'ac' and p['cmd'] == 'state':
-            state = ac_parse(p['value'])
-            logtxt = '[MQTT publish|AC] room[{}] data[{}]'.format(p['dest_subid'], state)
-            mqttc.publish('kocom/room/ac/' + p['dest_subid'] + '/state', json.dumps(state))
+        # elif p['dest'] == 'ac' and p['cmd'] == 'state': #겨울철 ac off -> 여름에 켜야함
+        #     state = ac_parse(p['value'])
+        #     logtxt = '[MQTT publish|AC] room[{}] data[{}]'.format(p['dest_subid'], state)
+        #     mqttc.publish('kocom/room/ac/' + p['dest_subid'] + '/state', json.dumps(state))
         elif p['dest'] == 'light' and p['cmd'] == 'state':
         #elif p['src'] == 'light' and p['cmd'] == 'state':
             state = light_parse(p['value'])
@@ -671,6 +671,7 @@ def publish_discovery(dev, sub=''):
         mqttc.publish(topic, json.dumps(payload))
         if logtxt != "" and config.get('Log', 'show_mqtt_publish') == 'True':
             logging.info(logtxt)
+         
     elif dev == 'elevator':
         topic = 'homeassistant/switch/kocom_wallpad_elevator/config'
         payload = {
@@ -725,6 +726,7 @@ def publish_discovery(dev, sub=''):
             mqttc.publish(topic, json.dumps(payload))
             if logtxt != "" and config.get('Log', 'show_mqtt_publish') == 'True':
                 logging.info(logtxt)
+             
     elif dev == 'thermo':
         num = int(room_h_dic.get(sub))
         #ha_topic = 'homeassistant/climate/kocom_livingroom_thermostat/config'
@@ -757,6 +759,7 @@ def publish_discovery(dev, sub=''):
         mqttc.publish(topic, json.dumps(payload))
         if logtxt != "" and config.get('Log', 'show_mqtt_publish') == 'True':
             logging.info(logtxt)
+         
     elif dev == 'ac': #24.04.29 추가 simon~
         num = int(room_h_dic.get(sub))
         # ha_topic = 'homeassistant/climate/kocom_livingroom_thermostat/config'
@@ -796,6 +799,7 @@ def publish_discovery(dev, sub=''):
         mqttc.publish(topic, json.dumps(payload), retain=True)
         if logtxt != '' and config.get('Log', 'show_mqtt_publish') == 'True':
             logging.info(logtxt)
+         
     elif dev == 'query':
         topic = 'homeassistant/button/kocom_wallpad_query/config'
         payload = {

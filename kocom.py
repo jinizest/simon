@@ -495,24 +495,24 @@ def mqtt_on_message(mqttc, obj, msg):
 
     # elevator on/off : kocom/myhome/elevator/command 
     # 'myhome' 대신 'livingroom' 사용 @241114
-   elif 'elevator' in topic_d:
-       dev_id = device_h_dic['elevator'] + room_h_dic['livingroom']  # 'myhome' 대신 'livingroom' 사용
-       state_on = json.dumps({'state': 'on'})
-       state_off = json.dumps({'state': 'off'})
-       if command == 'on':
-           ret_elevator = None
-           if config.get('Elevator', 'type', fallback='rs485') == 'rs485':
-               ret_elevator = send(dest=device_h_dic['wallpad']+'00', src=dev_id, cmd=cmd_h_dic['on'], value='0'*16, log='elevator', check_ack=False)
-           elif config.get('Elevator', 'type', fallback='rs485') == 'tcpip':
-               ret_elevator = call_elevator_tcpip()
-           if ret_elevator == False:
-               logging.debug('elevator send failed')
-               return
-           threading.Thread(target=mqttc.publish, args=("kocom/livingroom/elevator/state", state_on)).start()
-           if config.get('Elevator', 'rs485_floor', fallback=None) == None:
-               threading.Timer(5, mqttc.publish, args=("kocom/livingroom/elevator/state", state_off)).start()
-       elif command == 'off':
-           threading.Thread(target=mqttc.publish, args=("kocom/livingroom/elevator/state", state_off)).start()
+    elif 'elevator' in topic_d:
+        dev_id = device_h_dic['elevator'] + room_h_dic['livingroom']  # 'myhome' 대신 'livingroom' 사용
+        state_on = json.dumps({'state': 'on'})
+        state_off = json.dumps({'state': 'off'})
+        if command == 'on':
+            ret_elevator = None
+            if config.get('Elevator', 'type', fallback='rs485') == 'rs485':
+                ret_elevator = send(dest=device_h_dic['wallpad']+'00', src=dev_id, cmd=cmd_h_dic['on'], value='0'*16, log='elevator', check_ack=False)
+            elif config.get('Elevator', 'type', fallback='rs485') == 'tcpip':
+                ret_elevator = call_elevator_tcpip()
+            if ret_elevator == False:
+                logging.debug('elevator send failed')
+                return
+            threading.Thread(target=mqttc.publish, args=("kocom/livingroom/elevator/state", state_on)).start()
+            if config.get('Elevator', 'rs485_floor', fallback=None) == None:
+                threading.Timer(5, mqttc.publish, args=("kocom/livingroom/elevator/state", state_off)).start()
+        elif command == 'off':
+            threading.Thread(target=mqttc.publish, args=("kocom/livingroom/elevator/state", state_off)).start()
 
     # kocom/bedroom/fan/set_preset_mode/command
     elif 'fan' in topic_d and 'set_preset_mode' in topic_d:
